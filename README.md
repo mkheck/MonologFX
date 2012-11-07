@@ -14,8 +14,7 @@ MonologFX is there for the taking.
 
 Looking forward to ideas, discussions, etc. Share to learn!
 
-All the best, 
-Mark Heckler 
-mark.heckler@gmail.com 
+All the best,
+Mark Heckler
+mark.heckler@gmail.com
 @HecklerMark
-
