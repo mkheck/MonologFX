@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.thehecklers.monologfx;
 
 import java.util.Arrays;
@@ -10,6 +6,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import javafx.scene.Node;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 /**
  *
@@ -43,31 +41,6 @@ public class MonologFXButton {
         }
     }
     
-    /**
-     * Fully parameterized constructor for a MonologFX button.
-     * 
-     * @param type MonologFXButton.Type designation of button type.
-     * @param label String containing desired button text. Place an underscore
-     *      ("_") character prior to any character you wish to make
-     *      a shortcut (mnemonic) key.
-     * @param icon Node containing a graphic file (.png, .jpg) for use as an
-     *      icon on the button face.
-     * @param defaultButton Boolean denoting whether or not this button is the
-     *      designated default button.
-     * @param cancelButton Boolean denoting whether or not this button is the
-     *      designated cancel button.
-     * 
-     * @see Type
-     */
-    public MonologFXButton (Type type, String label, Node icon, boolean defaultButton, boolean cancelButton) {
-        this();  // Shouldn't really need to do this, but...
-        this.type = type;
-        this.label = label;
-        this.icon = icon;
-        this.defaultButton = defaultButton;
-        this.cancelButton = cancelButton;
-    }
-
     /**
      * Returns the type of this button.
      * 
@@ -115,7 +88,7 @@ public class MonologFXButton {
                     labelToReturn = res.getString(labelToReturn.replaceAll("_", "").toUpperCase());
                 }
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                System.err.println(e.getMessage());
             }   
 
             return labelToReturn;
@@ -147,12 +120,17 @@ public class MonologFXButton {
      * Sets the graphic for use on the button, either alone or with text.
      * Graphic format must be .png, .jpg (others?) supported by ImageView.
      * 
-     * @param icon Graphic file to display as an "icon" on the MonologFXButton.
+     * @param iconFile String containing the location and name of a graphic file 
+     *      (.png, .jpg) for use as an icon on the button face.
      *
      * @see ImageView
      */
-    public void setIcon(Node icon) {
-        this.icon = icon;
+    public void setIcon(String iconFile) {
+        try {
+            this.icon = new ImageView(new Image(getClass().getResourceAsStream(iconFile)));
+        } catch (Exception e) {
+            System.err.println("Exception trying to load button icon:" + e.getMessage());
+        }
     }
 
     /**

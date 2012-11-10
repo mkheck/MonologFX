@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.thehecklers.monologfx;
 
 import java.util.ArrayList;
@@ -88,7 +84,6 @@ public class MonologFX extends Stage {
         addButton(okBtn);
     }
     
-    
     private void addYesNoButtons() {
         /*
          * No default or cancel buttons designated, by design.
@@ -171,8 +166,8 @@ public class MonologFX extends Stage {
      * Allows developer to add stylesheet for MonologFX dialog, supplementing or 
      * overriding existing styling.
      * 
-     * @param stylesheet String variable containing the name or path/name 
-     * of the stylesheet to add to the dialog's scene and contained controls.
+     * @param stylesheet String variable containing the path/name of the 
+     * stylesheet to apply to the dialog's scene and contained controls.
      */
     public void addStylesheet(String stylesheet) {
         try {
@@ -231,7 +226,7 @@ public class MonologFX extends Stage {
     }
     
     /**
-     * Sets the text diplayed in the title bar of the MonologFX dialog box.
+     * Sets the text displayed in the title bar of the MonologFX dialog box.
      * 
      * @param title String containing the text to place in the title bar.
      */
@@ -343,7 +338,11 @@ public class MonologFX extends Stage {
         stage.centerOnScreen();
         stage.showAndWait();
         if ( buttonSelected == -1 ) {
-            return MonologFXButton.Type.CANCEL;
+            /* If a different type of button is designated the "cancel button",
+             * e.g. a MonologFXButton.Type.NO button, return that one;
+             * otherwise, return a CANCEL button type.
+             */
+            return ( buttonCancel == -1 ? MonologFXButton.Type.CANCEL : buttons.get(buttonCancel).getType() );
         } else {
             return buttons.get(buttonSelected).getType();
         }

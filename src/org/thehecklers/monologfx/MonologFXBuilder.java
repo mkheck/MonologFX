@@ -13,27 +13,22 @@ import javafx.beans.property.StringProperty;
 import javafx.scene.control.ControlBuilder;
 import javafx.util.Builder;
 
-
 /**
- * Created with IntelliJ IDEA.
- * User: Mark Heckler (mark.heckler@gmail.com, @HecklerMark)
- * Date: 11/7/12
- * Time: 12:43 PM
- * To change this template use File | Settings | File Templates.
  *
- * Mods:
- * Date:
- * Desc:
+ * @author Mark Heckler (mark.heckler@gmail.com, @HecklerMark)
  */
 public class MonologFXBuilder<B extends MonologFXBuilder<B>> extends ControlBuilder<B> implements Builder<MonologFX> {
     private HashMap<String, Property> properties = new HashMap<>();
     private List<MonologFXButton> buttons = new ArrayList<>();
     private List<String> stylesheets = new ArrayList<>();
-
-    
+ 
     protected MonologFXBuilder() {
     }
 
+    /**
+     * Creates and returns a MonologFX dialog box builder object upon which 
+     * to set properties and eventually, create a MonologFX dialog box.
+     */
     public static MonologFXBuilder create() {
         return new MonologFXBuilder();
     }
@@ -51,47 +46,86 @@ public class MonologFXBuilder<B extends MonologFXBuilder<B>> extends ControlBuil
         return this;
     }
 
+    /**
+     * Sets the type of MonologFX dialog box to build/display.
+     * 
+     * @param TYPE One of the supported types of dialogs.
+     * @see MonologFX.Type
+     */
     public final MonologFXBuilder type(final MonologFX.Type TYPE) {
         properties.put("type", new SimpleObjectProperty<>(TYPE));
         return this;
     }
 
+    /**
+     * Sets the button alignment for the MonologFX dialog box. Default is CENTER.
+     * 
+     * @param ALIGNBUTTONS Valid values are LEFT, RIGHT, and CENTER.
+     * 
+     * @see ButtonAlignment
+     */
     public final MonologFXBuilder buttonAlignment(final MonologFX.ButtonAlignment ALIGNBUTTONS) {
         properties.put("alignbuttons", new SimpleObjectProperty<>(ALIGNBUTTONS));
         return this;
     }
 
+    /**
+     * Sets the text displayed within the MonologFX dialog box. Word wrap 
+     * ensures that all text is displayed.
+     * 
+     * @param MESSAGE String variable containing the text to display.
+     */
     public final MonologFXBuilder message(final String MESSAGE) {
         properties.put("message", new SimpleStringProperty(MESSAGE));
         return this;
     }
 
+    /**
+     * Sets the modality of the MonologFX dialog box to build/display.
+     * 
+     * @param MODAL Boolean. A true value = APPLICATION_MODAL, false = NONE.
+     */
     public final MonologFXBuilder modal(final boolean MODAL) {
         properties.put("modal", new SimpleBooleanProperty(MODAL));
         return this;
     }
 
+    /**
+     * Sets the text to be displayed in the title bar of the MonologFX dialog.
+     * 
+     * @param TITLE_TEXT String containing the text to place in the title bar.
+     */
     public final MonologFXBuilder titleText(final String TITLE_TEXT) {
         properties.put("titleText", new SimpleStringProperty(TITLE_TEXT));
         return this;
     }
 
+    /**
+     * Allows developer to add stylesheet(s) for MonologFX dialog, supplementing 
+     * or overriding existing styling.
+     * 
+     * @param STYLESHEET String variable containing the path/name of the 
+     * stylesheet to apply to the dialog's scene and contained controls.
+     */
     public final MonologFXBuilder stylesheet(final String STYLESHEET) {
         //properties.put("stylesheet", new SimpleStringProperty(STYLESHEET));
         stylesheets.add(STYLESHEET);
         return this;
     }
 
-
+    /**
+     * This is where the magic happens...or at least where it all comes 
+     * together.  :-) Returns a MonologFX dialog, ready to display with
+     * showDialog().
+     * 
+     * @return MonologFX A dialog.
+     */
     @Override
     public MonologFX build() {
         final MonologFX CONTROL = new MonologFX();
 
         for (String key : properties.keySet()) {
             switch (key) {
-//                case "button":
-//                    CONTROL.addButton(((SimpleObjectProperty<MonologFXButton>) properties.get(key)).get());
-//                    break;
                 case "type":
                     CONTROL.setType(((ObjectProperty<MonologFX.Type>) properties.get(key)).get());
                     break;
@@ -107,9 +141,6 @@ public class MonologFXBuilder<B extends MonologFXBuilder<B>> extends ControlBuil
                 case "titleText":
                     CONTROL.setTitleText(((StringProperty) properties.get(key)).get());
                     break;
-//                case "stylesheet":
-//                    CONTROL.addStylesheet(((StringProperty) properties.get(key)).get());
-//                    break;
             }
         }
 
