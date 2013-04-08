@@ -5,3 +5,4 @@ MonologFX.jnlp
 MonologFX.html
 dist/web-files
 manifest.mf
+.gitignore.orig

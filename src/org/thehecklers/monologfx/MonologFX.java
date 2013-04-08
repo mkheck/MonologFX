@@ -154,9 +154,6 @@ public class MonologFX extends Stage {
                 }
 
                 // Close the dialog
-                //Node src = (Node) evt.getSource();
-                //Stage stg = (Stage) src.getScene().getWindow();
-                //stg.close();
                 ((Stage) ((Node) evt.getSource()).getScene().getWindow()).close();
             }
         });
