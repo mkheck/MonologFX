@@ -76,7 +76,6 @@ public class MonologFX extends Stage {
     private void addOKButton() {
         MonologFXButton okBtn = new MonologFXButton();
         okBtn.setType(MonologFXButton.Type.OK);
-        okBtn.setLabel("_OK");
         okBtn.setCancelButton(true);
         okBtn.setDefaultButton(true);
         
@@ -93,7 +92,6 @@ public class MonologFX extends Stage {
          */
         MonologFXButton yesBtn = new MonologFXButton();
         yesBtn.setType(MonologFXButton.Type.YES);
-        yesBtn.setLabel("_Yes");
         yesBtn.setCancelButton(false);
         yesBtn.setDefaultButton(false);
         
@@ -101,7 +99,6 @@ public class MonologFX extends Stage {
         
         MonologFXButton noBtn = new MonologFXButton();
         noBtn.setType(MonologFXButton.Type.NO);
-        noBtn.setLabel("_No");
         noBtn.setCancelButton(false);
         noBtn.setDefaultButton(false);
         
