@@ -1,9 +1,17 @@
 package org.thehecklers.monologfx;
 
+import static java.lang.Thread.sleep;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.beans.property.DoubleProperty;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -19,12 +27,13 @@ import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.Duration;
 
 /**
  *
  * @author Mark Heckler (mark.heckler@gmail.com, @MkHeck)
  */
-public class MonologFX extends Stage {
+public class MonologFX {
     /**
      * Type of dialog box is one of the following, each with a distinct icon:
      * <p>
@@ -40,17 +49,21 @@ public class MonologFX extends Stage {
      */
     public enum Type { ACCEPT, ERROR, INFO, QUESTION };
     public enum ButtonAlignment { LEFT, RIGHT, CENTER };
+    public enum Animation { NONE, LEFTRIGHT, RIGHTLEFT };
 
     private Type type;
     private Scene scene;
-    private BorderPane pane = new BorderPane();
-    private ImageView icon = new ImageView();
-    private Label message = new Label();
-    private HBox buttonBox = new HBox(10);
-    private List<MonologFXButton> buttons = new ArrayList<>();
+    private Stage stage;
+    private final BorderPane pane = new BorderPane();
+    private final ImageView icon = new ImageView();
+    private final Label message = new Label();
+    private final HBox buttonBox = new HBox(10);
+    private final List<MonologFXButton> buttons = new ArrayList<>();
     private int buttonCancel = -1;
     private int buttonSelected = -1;
     private ButtonAlignment buttonAlignment = ButtonAlignment.CENTER;
+    private Animation animation = Animation.NONE;
+    private int displayTime = 0;
     private List<String> stylesheets = new ArrayList<>();
 
     /**
@@ -179,11 +192,12 @@ public class MonologFX extends Stage {
     }
     
     private void initDialog(Type t) {
-        this.initStyle(StageStyle.UTILITY);
+        stage = new Stage();
+        stage.initStyle(StageStyle.UTILITY);
         
         setType(t);
-        this.initModality(Modality.APPLICATION_MODAL);
-        this.setMaxWidth(Screen.getPrimary().getVisualBounds().getWidth() / 2);        
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setMaxWidth(Screen.getPrimary().getVisualBounds().getWidth() / 2);
     }
     
     private void loadIconFromResource(String fileName) {
@@ -205,6 +219,16 @@ public class MonologFX extends Stage {
     }
 
     /**
+     * Sets the display time for the MonologFX dialog box. Default is 10 seconds.
+     * 
+     * @param displayTime Valid values are any integer value.
+     */
+    public void setDisplayTime(int displayTime) {
+        this.displayTime = displayTime;
+    }
+
+
+    /**
      * Sets the text displayed within the MonologFX dialog box. Word wrap ensures
      * that all text is displayed.
      * 
@@ -221,16 +245,16 @@ public class MonologFX extends Stage {
      * @param isModal Boolean. A true value = APPLICATION_MODAL, false = NONE.
      */
     public void setModal(boolean isModal) {
-        this.initModality((isModal ? Modality.APPLICATION_MODAL : Modality.NONE));
+        stage.initModality((isModal ? Modality.APPLICATION_MODAL : Modality.NONE));
     }
-    
+
     /**
      * Sets the text displayed in the title bar of the MonologFX dialog box.
      * 
      * @param title String containing the text to place in the title bar.
      */
     public void setTitleText(String title) {
-        this.setTitle(title);
+        stage.setTitle(title);
     }
     
     /**
@@ -244,8 +268,16 @@ public class MonologFX extends Stage {
     }
     
     public void setPos(double x, double y) {
-        this.setX(x);
-        this.setY(y);
+        stage.setX(x);
+        stage.setY(y);
+    }
+
+    public void setX(double x) {
+        stage.setX(x);
+    }
+    
+    public void setY(double y) {
+        stage.setY(y);
     }
     
     private void populateStage() {
@@ -316,7 +348,7 @@ public class MonologFX extends Stage {
                 System.err.println(ex.getMessage());
             }
         }
-        this.setScene(scene);
+        stage.setScene(scene);
     }
     
     /**
@@ -334,14 +366,14 @@ public class MonologFX extends Stage {
             }
         }
         
-        this.setResizable(false);
-        this.sizeToScene();        
+        stage.setResizable(false);
+        stage.sizeToScene();        
         
-        if (!(this.getX() > -1 && this.getY() > -1)) {
-            this.centerOnScreen();
+        if (!(stage.getX() > -1 && stage.getY() > -1)) {
+            stage.centerOnScreen();
         }
         
-        this.showAndWait();
+        stage.showAndWait();
         if ( buttonSelected == -1 ) {
             /* If a different type of button is designated the "cancel button",
              * e.g. a MonologFXButton.Type.NO button, return that one;
@@ -352,4 +384,67 @@ public class MonologFX extends Stage {
             return buttons.get(buttonSelected).getType();
         }
     }
+
+    /**
+     * Displays the MonologFX dialog box and waits for user input.
+     * 
+     * @return The type of the button pressed.
+     * 
+     * @see MonologFXButton.Type
+     */
+    public MonologFXButton.Type show() {
+        populateStage();
+        if ( type == Type.QUESTION ) {
+            if ( buttons.size() == 0 ) {
+                addYesNoButtons();
+            }
+        }
+
+        stage.setResizable(false);
+        stage.sizeToScene();        
+
+        if (displayTime < 1) {  // Show dialog indefinitely
+            // Zero value or nonsensical one: who shows a dialog for -10 seconds?
+            // Just show it!
+            if (!(stage.getX() > -1 && stage.getY() > -1)) {
+                stage.centerOnScreen();
+            }
+
+            stage.showAndWait();
+        } else {    // Timed dialog
+            stage.setOpacity(0d);
+            stage.show();
+            final DoubleProperty opacity = stage.opacityProperty();
+            
+            Timeline fadeOut = new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(opacity, 0d)),
+                new KeyFrame(new Duration(displayTime * 250),
+                        new EventHandler() {
+                            @Override
+                            public void handle(Event t) {
+                                Timeline fadeIn = new Timeline(
+                                    new KeyFrame(Duration.ZERO, new KeyValue(opacity, 1d)),
+                                    new KeyFrame(new Duration(displayTime * 250), 
+                                        new EventHandler() {
+                                            @Override
+                                            public void handle(Event t) {
+                                                stage.hide();
+                                            }
+                                        }, new KeyValue(opacity, 0d)));
+                                fadeIn.play();
+                            }
+                        }, new KeyValue(opacity, 1d)));
+                fadeOut.play();
+        }
+
+        if ( buttonSelected == -1 ) {
+            /* If a different type of button is designated the "cancel button",
+             * e.g. a MonologFXButton.Type.NO button, return that one;
+             * otherwise, return a CANCEL button type.
+             */
+            return ( buttonCancel == -1 ? MonologFXButton.Type.CANCEL : buttons.get(buttonCancel).getType() );
+        } else {
+            return buttons.get(buttonSelected).getType();
+        }
+    }    
 }
