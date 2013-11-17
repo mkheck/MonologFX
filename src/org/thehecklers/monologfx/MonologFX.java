@@ -45,13 +45,8 @@ public class MonologFX {
      * <p>
      * If no type is specified in the constructor, the default is INFO.
      */
-    public enum Type {
-        ACCEPT, ERROR, INFO, QUESTION
-    };
-
-    public enum ButtonAlignment {
-        LEFT, RIGHT, CENTER
-    };
+    public enum Type { ACCEPT, ERROR, INFO, QUESTION };
+    public enum ButtonAlignment { LEFT, RIGHT, CENTER };
 
     private Type type;
     private Scene scene;
@@ -161,7 +156,7 @@ public class MonologFX {
             @Override
             public void handle(ActionEvent evt) {
                 // Iterate through to find correct button.
-                for (int i = 0; i < buttons.size(); i++) {
+                for (int i=0; i < buttons.size(); i++) {
                     if (buttons.get(i).getLabel().equalsIgnoreCase(((Button) evt.getSource()).getText())) {
                         buttonSelected = i;
                         break;
@@ -210,8 +205,7 @@ public class MonologFX {
     }
 
     /**
-     * Sets the button alignment for the MonologFX dialog box. Default is
-     * CENTER.
+     * Sets the button alignment for the MonologFX dialog box. Default is CENTER.
      *
      * @param buttonAlignment Valid values are LEFT, RIGHT, and CENTER.
      *
@@ -365,7 +359,7 @@ public class MonologFX {
         pane.setBottom(buttonBox);
 
         scene = new Scene(pane);
-        for (int i = 0; i < stylesheets.size(); i++) {
+        for (int i=0; i < stylesheets.size(); i++) {
             try {
                 scene.getStylesheets().add(stylesheets.get(i));
             } catch (Exception ex) {
