@@ -21,4 +21,8 @@ mark.heckler@gmail.com
 
 UPDATES:
 --------
+20131117 So many good ideas for enhancements! I'm pleased to announce that one of those in particular made this update: a timed dialog that doesn't require a user response before disappearing. I added fade in/out effects (similar to some well-known OS and email notifications) because it seemed the right thing to do. :) See the `setDisplayTime(int displayTime)` method for more information.
+
+I also made some much-needed (at least in my mind) architectural changes to MonologFX. I'm not done, but this is a good start. :)
+
 20130408 For those who are still finding MonologFX useful, thank you! Your feedback & ideas have encouraged me to continue maintaining and improving it. I'll be updating the JFXtras lib with the updates as well, so please take a look at all the other things (in addition to dialogs) that it has to offer. Best coding!
