@@ -64,8 +64,8 @@ public class MonologFX {
     private int buttonCancel = -1;
     private int buttonSelected = -1;
     private ButtonAlignment buttonAlignment = ButtonAlignment.CENTER;
-    private int displayTime = 0;
-    private int fadeInOutTime;
+    private float displayTime = 0f;
+    private float fadeInOutTime;
     private final List<String> stylesheets = new ArrayList<>();
 
     /**
@@ -230,8 +230,8 @@ public class MonologFX {
     public void setDisplayTime(int displayTime) {
         this.displayTime = displayTime;
 
-        // Cap fade in/out time to max of 5 seconds, lest it be too drawn-ouuuut...
-        fadeInOutTime = Math.round(Math.min(displayTime / 4f, 5f));
+        // Fade in/out time = max of 5 seconds
+        fadeInOutTime = Math.min(displayTime/4f, 5f);
     }
 
     /**
@@ -408,7 +408,7 @@ public class MonologFX {
         stage.setResizable(false);
         stage.sizeToScene();
 
-        if (displayTime < 1) {  // Show dialog indefinitely
+        if (displayTime <= 0f) {  // Show dialog indefinitely
             // Zero value or nonsensical one: who shows a dialog for -10 seconds?
             // Just show it!
             if (!(stage.getX() > -1 && stage.getY() > -1)) {

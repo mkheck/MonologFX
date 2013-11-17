@@ -44,6 +44,7 @@ public class MonologTest extends Application {
 //                mono.addButton(mlb2);
 //                mono.setDisplayTime(5);
 
+                // "Conventional dialog (non-timed)
                 MonologFXButton mlb = MonologFXButtonBuilder.create()
                         .defaultButton(true)
                         //.icon("dialog_apply.png")
@@ -57,17 +58,36 @@ public class MonologTest extends Application {
                         .build();
 
                 MonologFX mono = MonologFXBuilder.create()
-                        //.modal(true)
+                        .modal(true)
                         .message("Welcome to MonologFX! Please feel free to try it out and share your thoughts.")
                         .titleText("Important Announcement")
                         .button(mlb)
                         .button(mlb2)
                         .buttonAlignment(MonologFX.ButtonAlignment.CENTER)
-                        .displayTime(10)
                         .build();
 
                 // Show the dialog!
                 MonologFXButton.Type retval = mono.show();
+                System.out.println("Return value=" + retval);
+                
+                // Testing a timed dialog
+                mlb = MonologFXButtonBuilder.create()
+                        .defaultButton(true)
+                        .cancelButton(true)
+                        .type(MonologFXButton.Type.OK)
+                        .build();
+
+                mono = MonologFXBuilder.create()
+                        .message("This is a timed dialog. Watch it appear and disappear before your eyes!")
+                        .titleText("Now you see it...")
+                        .button(mlb)
+                        .buttonAlignment(MonologFX.ButtonAlignment.CENTER)
+                        .displayTime(5)
+                        .build();
+
+                // Show the dialog!
+                retval = mono.show();
+                System.out.println("Return value=" + retval);
             }
         });
 
